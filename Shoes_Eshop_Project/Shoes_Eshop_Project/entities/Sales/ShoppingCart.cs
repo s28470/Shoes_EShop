@@ -2,7 +2,7 @@ namespace Shoes_Eshop_Project.entities.Sales;
 
 public class ShoppingCart
 {
-    public List<Product> Products{get; init;}
+    public Dictionary<Product, int> Products{get; init;}
     
     private bool _isCompleted;
 
@@ -11,12 +11,12 @@ public class ShoppingCart
     public ShoppingCart()
     {
         _isCompleted = false;
-        Products = new List<Product>();
+        Products = new Dictionary<Product, int>();
     }
 
     public decimal GetTotalPrice()
     {
-        _totalPrice = Products.Select(product => product.Price).Sum();
+        _totalPrice = Products.Select(productAndAmount => productAndAmount.Key.Price * productAndAmount.Value).Sum();
         return _totalPrice;
     }
 }

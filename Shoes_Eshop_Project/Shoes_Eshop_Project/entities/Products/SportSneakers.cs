@@ -1,6 +1,9 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Shoes_Eshop_Project.entities;
 
 public class SportSneakers : Sneakers
 {
-    private string SportType { get; set; }
+    [Required]
+    public string SportType { get; set; }
 }

@@ -21,8 +21,8 @@ public class ShoppingCart
         _totalPrice = Products.Select(productAndAmount => productAndAmount.Key.Price * productAndAmount.Value).Sum();
         return _totalPrice;
     }
-
-    public void AddProduct(Product product, int amount)
+    
+    public void addProductToCart(Product product, int amount)
     {
         if (amount <= 0)
         {

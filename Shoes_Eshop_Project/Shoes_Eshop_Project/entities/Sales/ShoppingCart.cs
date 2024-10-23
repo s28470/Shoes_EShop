@@ -37,11 +37,8 @@ public class ShoppingCart
 
     public void RemoveProduct(Product product)
     {
-        if (Products.ContainsKey(product))
-        {
-            Products.Remove(product);    
-        }
-        
+        Products.Remove(product);
+
     }
     
     

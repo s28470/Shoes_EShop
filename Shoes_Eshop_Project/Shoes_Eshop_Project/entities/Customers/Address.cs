@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using System.ComponentModel.DataAnnotations;
 
 namespace Shoes_Eshop_Project.entities;
@@ -11,10 +12,16 @@ public class Address
     public string Street { get; set; }
     
     [Required]
-    private string HouseNumber { get; set; }
+     public string HouseNumber { get; set; }
 
     public string? ApartmentNumber { get; set; }
     [Required]
     public string PostalCode { get; set; }
+    
+    public bool ValidatePostalCode(string postalCode)
+    {
+        return Regex.IsMatch(postalCode, @"^\d{5}$");
+    }
+
     
 }

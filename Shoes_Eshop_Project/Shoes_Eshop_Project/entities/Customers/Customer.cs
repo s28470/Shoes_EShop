@@ -1,7 +1,7 @@
 namespace Shoes_Eshop_Project.entities;
 using System.ComponentModel.DataAnnotations;
 
-public abstract class Customer
+public class Customer
 {
     [Required]
     public string Name { get; set; }
@@ -21,7 +21,7 @@ public abstract class Customer
     
     public CustomerStatus CustomerStatus { get; private set; }
 
-    protected Customer()
+    public Customer()
     {
         CustomerStatus = CustomerStatus.Default;
     }
@@ -32,6 +32,10 @@ public abstract class Customer
         {
             CustomerStatus = CustomerStatus.VIP;
         }
+    }
+    
+    public double applyDiscountForVip(double totalPrice) {
+        return totalPrice * 0.98;
     }
     
 }

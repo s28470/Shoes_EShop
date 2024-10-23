@@ -2,7 +2,7 @@ namespace Shoes_Eshop_Project.entities.Sales;
 
 public class ShoppingCart
 {
-    public Dictionary<Product, int> Products{get; init;}
+    private Dictionary<Product, int> Products{get; init;}
     
     private bool _isCompleted = false;
 
@@ -29,15 +29,18 @@ public class ShoppingCart
             return;
         }
 
-        if (Products.ContainsKey(product))
+        if (!Products.TryAdd(product, amount))
         {
             Products[product] += amount;
         }
-        else
+    }
+
+    public void RemoveProduct(Product product)
+    {
+        if (Products.ContainsKey(product))
         {
-            Products[product] = amount;
+            Products.Remove(product);    
         }
-        
         
     }
     

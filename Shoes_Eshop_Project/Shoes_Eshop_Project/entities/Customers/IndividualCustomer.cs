@@ -4,7 +4,7 @@ namespace Shoes_Eshop_Project.entities;
 
 public class IndividualCustomer : Customer
 {
-    [Required]
+    
     private string Gender { get; set; }
     
     [Range(0, 120)]

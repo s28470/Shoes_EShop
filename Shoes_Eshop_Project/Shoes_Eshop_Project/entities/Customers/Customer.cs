@@ -3,14 +3,14 @@ using System.ComponentModel.DataAnnotations;
 
 public class Customer
 {
-    [Required]
+    
     public string Name { get; set; }
-    [Required]
+    
     public string ContactNumber { get; set; }
     
     public string? Email { get; set; }
 
-    [Required]
+    
     public Address Address { get; set; }
 
     public decimal TotalPurchases { get; set; } 

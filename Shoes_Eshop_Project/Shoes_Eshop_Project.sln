@@ -1,6 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# 
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shoes_Eshop_Project", "Shoes_Eshop_Project\Shoes_Eshop_Project.csproj", "{3535BE53-D9AB-4B8F-92D3-2E43E474FFAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shoes_Eshop_Tests", "Shoes_Eshop_Tests\Shoes_Eshop_Tests.csproj", "{812EF0F6-C6AA-48FC-BBF7-C2B34099CD6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +15,9 @@ Global
 		{3535BE53-D9AB-4B8F-92D3-2E43E474FFAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3535BE53-D9AB-4B8F-92D3-2E43E474FFAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3535BE53-D9AB-4B8F-92D3-2E43E474FFAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{812EF0F6-C6AA-48FC-BBF7-C2B34099CD6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{812EF0F6-C6AA-48FC-BBF7-C2B34099CD6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{812EF0F6-C6AA-48FC-BBF7-C2B34099CD6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{812EF0F6-C6AA-48FC-BBF7-C2B34099CD6E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

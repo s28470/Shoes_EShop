@@ -1,45 +1,80 @@
-namespace Shoes_Eshop_Project.entities.Sales;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+using Shoes_Eshop_Project.Entities;
 
-public class ShoppingCart
+namespace Shoes_Eshop_Project.Entities.Sales
 {
-    private Dictionary<Product, int> Products{get; init;}
-    
-    private bool _isCompleted = false;
-
-    private decimal _totalPrice = 0;
-
-    public Customer Customer { get; set; }
-
-    public ShoppingCart()
+    public class ShoppingCart
     {
-        _isCompleted = false;
-        Products = new Dictionary<Product, int>();
-    }
+        private Dictionary<Product, int> Products { get; init; }
+        private bool _isCompleted = false;
+        private decimal _totalPrice = 0;
+        public Customer Customer { get; private set; }
 
-    public decimal GetTotalPrice()
-    {
-        _totalPrice = Products.Select(productAndAmount => productAndAmount.Key.Price * productAndAmount.Value).Sum();
-        return _totalPrice;
-    }
-    
-    public void addProductToCart(Product product, int amount)
-    {
-        if (amount <= 0)
+        private static List<ShoppingCart> _instances = new List<ShoppingCart>();
+
+        public ShoppingCart(Customer customer)
         {
-            return;
+            Customer = customer ?? throw new ArgumentNullException(nameof(customer), "Customer cannot be null.");
+            Products = new Dictionary<Product, int>();
+            _instances.Add(this);
         }
 
-        if (!Products.TryAdd(product, amount))
+        public decimal GetTotalPrice()
         {
-            Products[product] += amount;
+            _totalPrice = Products.Sum(item => item.Key.Price * item.Value);
+            return _totalPrice;
+        }
+        
+        public void AddProductToCart(Product product, int amount)
+        {
+            if (_isCompleted)
+                throw new InvalidOperationException("Cannot modify a completed cart.");
+            
+            if (amount <= 0)
+                throw new ArgumentException("Amount must be positive.", nameof(amount));
+
+            if (!Products.TryAdd(product, amount))
+                Products[product] += amount;
+        }
+
+        public void RemoveProduct(Product product)
+        {
+            if (_isCompleted)
+                throw new InvalidOperationException("Cannot modify a completed cart.");
+            
+            Products.Remove(product);
+        }
+
+        public void CompletePurchase()
+        {
+            if (_isCompleted)
+                throw new InvalidOperationException("Cart has already been completed.");
+
+            _isCompleted = true;
+        }
+
+        public static void Save(string filePath)
+        {
+            var jsonData = JsonSerializer.Serialize(_instances);
+            File.WriteAllText(filePath, jsonData);
+        }
+
+        public static void Load(string filePath)
+        {
+            if (File.Exists(filePath))
+            {
+                var jsonData = File.ReadAllText(filePath);
+                _instances = JsonSerializer.Deserialize<List<ShoppingCart>>(jsonData) ?? new List<ShoppingCart>();
+            }
+        }
+
+        public static List<ShoppingCart> GetAll()
+        {
+            return new List<ShoppingCart>(_instances);
         }
     }
-
-    public void RemoveProduct(Product product)
-    {
-        Products.Remove(product);
-
-    }
-    
-    
 }

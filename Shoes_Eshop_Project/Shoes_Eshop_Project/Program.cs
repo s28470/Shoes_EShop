@@ -1,5 +1,9 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using Shoes_Eshop_Project.entities;
 
-using Shoes_Eshop_Project.entities;
+class Program
+{
+    static void Main(string[] args)
+    {
 
-Console.WriteLine("Hello, World!");
+    }
+}

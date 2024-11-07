@@ -69,5 +69,9 @@ namespace Shoes_Eshop_Project.Entities
         {
             return CustomerStatus == CustomerStatus.VIP ? totalPrice * (1 - _vipDiscount) : totalPrice;
         }
+        public static void ClearAll()
+        {
+            _instances.Clear();
+        }
     }
 }

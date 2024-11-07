@@ -70,5 +70,9 @@ namespace Shoes_Eshop_Project.entities
         {
             return new List<Address>(_addresses);
         }
+        public static void ClearAll()
+        {
+            _addresses.Clear();
+        }
     }
 }

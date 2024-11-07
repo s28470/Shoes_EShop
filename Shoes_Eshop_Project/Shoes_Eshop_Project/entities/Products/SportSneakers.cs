@@ -40,5 +40,9 @@ namespace Shoes_Eshop_Project.Entities
         {
             return new List<SportSneakers>(_instances);
         }
+        public static void ClearAll()
+        {
+            _instances.Clear();
+        }
     }
 }

@@ -9,8 +9,8 @@ namespace Shoes_Eshop_Project.Entities
 {
     public class IndividualCustomer : Customer
     {
-        private string Gender { get; set; }
-        private int? Age { get; set; }
+        public string Gender { get; set; }
+        public int? Age { get; set; }
 
         private static List<IndividualCustomer> _instances = new List<IndividualCustomer>();
 
@@ -45,6 +45,10 @@ namespace Shoes_Eshop_Project.Entities
         public static List<IndividualCustomer> GetAll()
         {
             return new List<IndividualCustomer>(_instances);
+        }
+        public static void ClearAll()
+        {
+            _instances.Clear();
         }
     }
 }

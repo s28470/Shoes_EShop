@@ -76,5 +76,9 @@ namespace Shoes_Eshop_Project.Entities.Sales
         {
             return new List<ShoppingCart>(_instances);
         }
+        public static void ClearAll()
+        {
+            _instances.Clear();
+        }
     }
 }

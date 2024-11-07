@@ -56,5 +56,9 @@ namespace Shoes_Eshop_Project.Entities.Sales
         {
             return new List<Promotion>(_instances);
         }
+        public static void ClearAll()
+        {
+            _instances.Clear();
+        }
     }
 }

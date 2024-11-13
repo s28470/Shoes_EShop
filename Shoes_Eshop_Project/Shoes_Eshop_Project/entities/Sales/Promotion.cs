@@ -7,9 +7,33 @@ namespace Shoes_Eshop_Project.Entities.Sales
 {
     public class Promotion
     {
-        public string Description { get; private set; }
-        public DateTime StartDate { get; private set; }
-        public DateTime EndDate { get; private set; }
+        private string _description;
+        private DateTime _startDate;
+        private DateTime _endDate;
+
+        public string Description
+        {
+            get => _description;
+            private set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Description cannot be null or empty.", nameof(value));
+                _description = value;
+            }
+        }
+
+        public DateTime StartDate
+        {
+            get => _startDate;
+            private set => _startDate = value;
+        }
+
+        public DateTime EndDate
+        {
+            get => _endDate;
+            private set => _endDate = value;
+        }
+
         public Promotion? MainPromotion { get; set; }
         public ICollection<Product> PromotionalProducts { get; set; }
 
@@ -34,7 +58,7 @@ namespace Shoes_Eshop_Project.Entities.Sales
         public bool IsPromotionActive()
         {
             DateTime today = DateTime.Now;
-            return (today >= StartDate) && (today <= EndDate);
+            return today >= StartDate && today <= EndDate;
         }
 
         public static void Save(string filePath)
@@ -52,13 +76,8 @@ namespace Shoes_Eshop_Project.Entities.Sales
             }
         }
 
-        public static List<Promotion> GetAll()
-        {
-            return new List<Promotion>(_instances);
-        }
-        public static void ClearAll()
-        {
-            _instances.Clear();
-        }
+        public static List<Promotion> GetAll() => new List<Promotion>(_instances);
+
+        public static void ClearAll() => _instances.Clear();
     }
 }

@@ -9,11 +9,61 @@ namespace Shoes_Eshop_Project.Entities
 {
     public class Customer
     {
-        public string Name { get; private set; }
-        public string ContactNumber { get; private set; }
-        public string? Email { get; private set; }
-        public Address Address { get; private set; }
-        public decimal TotalPurchases { get; set; }
+        private string _name;
+        private string _contactNumber;
+        private string? _email;
+        private Address _address;
+
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Name cannot be null or empty.", nameof(value));
+                _name = value;
+            }
+        }
+
+        public string ContactNumber
+        {
+            get => _contactNumber;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("ContactNumber cannot be null or empty.", nameof(value));
+                _contactNumber = value;
+            }
+        }
+
+        public string? Email
+        {
+            get => _email;
+            set => _email = value;
+        }
+
+        public Address Address
+        {
+            get => _address;
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException(nameof(value), "Address cannot be null.");
+                _address = value;
+            }
+        }
+
+        public decimal TotalPurchases
+        {
+            get => _totalPurchases;
+            set
+            {
+                _totalPurchases = value;
+                UpdateStatus();
+            }
+        }
+
+        private decimal _totalPurchases;
         private static decimal _totalPurchasesToBecomeVip = 1000;
         private static double _vipDiscount = 0.02;
         public CustomerStatus CustomerStatus { get; private set; }
@@ -22,13 +72,6 @@ namespace Shoes_Eshop_Project.Entities
 
         public Customer(string name, string contactNumber, Address address, string? email = null)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Name cannot be null or empty.", nameof(name));
-            if (string.IsNullOrWhiteSpace(contactNumber))
-                throw new ArgumentException("ContactNumber cannot be null or empty.", nameof(contactNumber));
-            if (address == null)
-                throw new ArgumentNullException(nameof(address), "Address cannot be null.");
-
             Name = name;
             ContactNumber = contactNumber;
             Address = address;
@@ -52,10 +95,7 @@ namespace Shoes_Eshop_Project.Entities
             }
         }
 
-        public static List<Customer> GetAll()
-        {
-            return new List<Customer>(_instances);
-        }
+        public static List<Customer> GetAll() => new List<Customer>(_instances);
 
         private void UpdateStatus()
         {
@@ -69,9 +109,7 @@ namespace Shoes_Eshop_Project.Entities
         {
             return CustomerStatus == CustomerStatus.VIP ? totalPrice * (1 - _vipDiscount) : totalPrice;
         }
-        public static void ClearAll()
-        {
-            _instances.Clear();
-        }
+
+        public static void ClearAll() => _instances.Clear();
     }
 }

@@ -9,19 +9,36 @@ namespace Shoes_Eshop_Project.Entities
 {
     public class IndividualCustomer : Customer
     {
-        public string Gender { get; set; }
-        public int? Age { get; set; }
+        private string _gender;
+        private int? _age;
+
+        public string Gender
+        {
+            get => _gender;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Gender cannot be null or empty.", nameof(value));
+                _gender = value;
+            }
+        }
+
+        public int? Age
+        {
+            get => _age;
+            set
+            {
+                if (value.HasValue && (value < 0 || value > 120))
+                    throw new ArgumentOutOfRangeException(nameof(value), "Age must be between 0 and 120.");
+                _age = value;
+            }
+        }
 
         private static List<IndividualCustomer> _instances = new List<IndividualCustomer>();
 
         public IndividualCustomer(string name, string contactNumber, Address address, string gender, int? age = null, string? email = null)
             : base(name, contactNumber, address, email)
         {
-            if (string.IsNullOrWhiteSpace(gender))
-                throw new ArgumentException("Gender cannot be null or empty.", nameof(gender));
-            if (age.HasValue && (age < 0 || age > 120))
-                throw new ArgumentOutOfRangeException(nameof(age), "Age must be between 0 and 120.");
-
             Gender = gender;
             Age = age;
             _instances.Add(this);
@@ -42,13 +59,8 @@ namespace Shoes_Eshop_Project.Entities
             }
         }
 
-        public static List<IndividualCustomer> GetAll()
-        {
-            return new List<IndividualCustomer>(_instances);
-        }
-        public static void ClearAll()
-        {
-            _instances.Clear();
-        }
+        public static List<IndividualCustomer> GetAll() => new List<IndividualCustomer>(_instances);
+
+        public static void ClearAll() => _instances.Clear();
     }
 }

@@ -7,18 +7,35 @@ namespace Shoes_Eshop_Project.Entities
 {
     public class CompanyCustomer
     {
-        public string Occupation { get; private set; }
-        public string WebSite { get; private set; }
+        private string _occupation;
+        private string _website;
+
+        public string Occupation
+        {
+            get => _occupation;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Occupation cannot be null or empty.", nameof(value));
+                _occupation = value;
+            }
+        }
+
+        public string WebSite
+        {
+            get => _website;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Website cannot be null or empty.", nameof(value));
+                _website = value;
+            }
+        }
 
         private static List<CompanyCustomer> _instances = new List<CompanyCustomer>();
 
         public CompanyCustomer(string occupation, string website)
         {
-            if (string.IsNullOrWhiteSpace(occupation))
-                throw new ArgumentException("Occupation cannot be null or empty.", nameof(occupation));
-            if (string.IsNullOrWhiteSpace(website))
-                throw new ArgumentException("Website cannot be null or empty.", nameof(website));
-
             Occupation = occupation;
             WebSite = website;
             _instances.Add(this);
@@ -39,13 +56,8 @@ namespace Shoes_Eshop_Project.Entities
             }
         }
 
-        public static List<CompanyCustomer> GetAll()
-        {
-            return new List<CompanyCustomer>(_instances);
-        }
-        public static void ClearAll()
-        {
-            _instances.Clear();
-        }
+        public static List<CompanyCustomer> GetAll() => new List<CompanyCustomer>(_instances);
+
+        public static void ClearAll() => _instances.Clear();
     }
 }

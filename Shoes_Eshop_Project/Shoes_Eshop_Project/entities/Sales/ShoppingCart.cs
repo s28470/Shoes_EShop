@@ -9,23 +9,23 @@ namespace Shoes_Eshop_Project.Entities.Sales
 {
     public class ShoppingCart
     {
-        private Dictionary<Product, int> Products { get; init; }
-        private bool _isCompleted = false;
-        private decimal _totalPrice = 0;
+        private Dictionary<Product, int> _products;
+        private bool _isCompleted;
+        private decimal _totalPrice;
+        
         public Customer Customer { get; private set; }
-
         private static List<ShoppingCart> _instances = new List<ShoppingCart>();
 
         public ShoppingCart(Customer customer)
         {
             Customer = customer ?? throw new ArgumentNullException(nameof(customer), "Customer cannot be null.");
-            Products = new Dictionary<Product, int>();
+            _products = new Dictionary<Product, int>();
             _instances.Add(this);
         }
 
         public decimal GetTotalPrice()
         {
-            _totalPrice = Products.Sum(item => item.Key.Price * item.Value);
+            _totalPrice = _products.Sum(item => item.Key.Price * item.Value);
             return _totalPrice;
         }
         
@@ -37,8 +37,8 @@ namespace Shoes_Eshop_Project.Entities.Sales
             if (amount <= 0)
                 throw new ArgumentException("Amount must be positive.", nameof(amount));
 
-            if (!Products.TryAdd(product, amount))
-                Products[product] += amount;
+            if (!_products.TryAdd(product, amount))
+                _products[product] += amount;
         }
 
         public void RemoveProduct(Product product)
@@ -46,7 +46,7 @@ namespace Shoes_Eshop_Project.Entities.Sales
             if (_isCompleted)
                 throw new InvalidOperationException("Cannot modify a completed cart.");
             
-            Products.Remove(product);
+            _products.Remove(product);
         }
 
         public void CompletePurchase()
@@ -72,13 +72,8 @@ namespace Shoes_Eshop_Project.Entities.Sales
             }
         }
 
-        public static List<ShoppingCart> GetAll()
-        {
-            return new List<ShoppingCart>(_instances);
-        }
-        public static void ClearAll()
-        {
-            _instances.Clear();
-        }
+        public static List<ShoppingCart> GetAll() => new List<ShoppingCart>(_instances);
+
+        public static void ClearAll() => _instances.Clear();
     }
 }

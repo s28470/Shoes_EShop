@@ -78,7 +78,7 @@ namespace Shoes_Eshop_Project.Tests
             var customer1 = new CompanyCustomer("IT Services", "www.example.com");
             var customer2 = new CompanyCustomer("Consulting", "www.consulting.com");
             var customers = CompanyCustomer.GetAll();
-            Assert.AreEqual(2, customers.Count);
+            Assert.AreEqual(2, customers.Count); 
         }
 
         [Test]

@@ -7,16 +7,24 @@ namespace Shoes_Eshop_Project.Entities
 {
     public class SportSneakers : Sneakers
     {
-        public string SportType { get; private set; }
+        private string _sportType;
+
+        public string SportType
+        {
+            get => _sportType;
+            private set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("SportType cannot be null or empty.", nameof(value));
+                _sportType = value;
+            }
+        }
 
         private static List<SportSneakers> _instances = new List<SportSneakers>();
 
         public SportSneakers(string name, string color, decimal price, double weight, string cushioningTechnology, int shoeSize, int amount, string sportType)
             : base(name, color, price, weight, cushioningTechnology, shoeSize, amount)
         {
-            if (string.IsNullOrWhiteSpace(sportType))
-                throw new ArgumentException("SportType cannot be null or empty.", nameof(sportType));
-
             SportType = sportType;
             _instances.Add(this);
         }
@@ -36,13 +44,8 @@ namespace Shoes_Eshop_Project.Entities
             }
         }
 
-        public static List<SportSneakers> GetAll()
-        {
-            return new List<SportSneakers>(_instances);
-        }
-        public static void ClearAll()
-        {
-            _instances.Clear();
-        }
+        public static List<SportSneakers> GetAll() => new List<SportSneakers>(_instances);
+
+        public static void ClearAll() => _instances.Clear();
     }
 }

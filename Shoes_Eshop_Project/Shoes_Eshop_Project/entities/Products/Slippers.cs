@@ -7,16 +7,24 @@ namespace Shoes_Eshop_Project.Entities
 {
     public class Slippers : Product
     {
-        public string Grip { get; private set; }
+        private string _grip;
+
+        public string Grip
+        {
+            get => _grip;
+            private set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Grip cannot be null or empty.", nameof(value));
+                _grip = value;
+            }
+        }
 
         private static List<Slippers> _instances = new List<Slippers>();
 
         public Slippers(string name, string color, decimal price, string grip, int shoeSize, int amount)
             : base(name, color, price)
         {
-            if (string.IsNullOrWhiteSpace(grip))
-                throw new ArgumentException("Grip cannot be null or empty.", nameof(grip));
-
             Grip = grip;
             ShoeSize = shoeSize;
             Amount = amount;
@@ -38,14 +46,8 @@ namespace Shoes_Eshop_Project.Entities
             }
         }
 
-        public static List<Slippers> GetAll()
-        {
-            return new List<Slippers>(_instances);
-        }
+        public static List<Slippers> GetAll() => new List<Slippers>(_instances);
 
-        public static void ClearAll()
-        {
-            _instances.Clear();
-        }
+        public static void ClearAll() => _instances.Clear();
     }
 }

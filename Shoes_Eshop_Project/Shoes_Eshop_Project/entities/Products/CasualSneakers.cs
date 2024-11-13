@@ -7,18 +7,35 @@ namespace Shoes_Eshop_Project.Entities
 {
     public class CasualSneakers
     {
-        private string StyleType { get; set; }
-        private string Season { get; set; }
+        private string _styleType;
+        private string _season;
+
+        public string StyleType
+        {
+            get => _styleType;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("StyleType cannot be null or empty.", nameof(value));
+                _styleType = value;
+            }
+        }
+
+        public string Season
+        {
+            get => _season;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Season cannot be null or empty.", nameof(value));
+                _season = value;
+            }
+        }
 
         private static List<CasualSneakers> _instances = new List<CasualSneakers>();
 
         public CasualSneakers(string styleType, string season)
         {
-            if (string.IsNullOrWhiteSpace(styleType))
-                throw new ArgumentException("StyleType cannot be null or empty.", nameof(styleType));
-            if (string.IsNullOrWhiteSpace(season))
-                throw new ArgumentException("Season cannot be null or empty.", nameof(season));
-
             StyleType = styleType;
             Season = season;
             _instances.Add(this);
@@ -39,13 +56,8 @@ namespace Shoes_Eshop_Project.Entities
             }
         }
 
-        public static List<CasualSneakers> GetAll()
-        {
-            return new List<CasualSneakers>(_instances);
-        }
-        public static void ClearAll()
-        {
-            _instances.Clear();
-        }
+        public static List<CasualSneakers> GetAll() => new List<CasualSneakers>(_instances);
+
+        public static void ClearAll() => _instances.Clear();
     }
 }

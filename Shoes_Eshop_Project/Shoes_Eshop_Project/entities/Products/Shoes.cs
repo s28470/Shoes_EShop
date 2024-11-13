@@ -9,7 +9,16 @@ namespace Shoes_Eshop_Project.Entities
 {
     public class Shoes : Product
     {
-        public LeatherType LeatherType { get; private set; }
+        private LeatherType _leatherType;
+
+        public LeatherType LeatherType
+        {
+            get => _leatherType;
+            private set
+            {
+                _leatherType = value;
+            }
+        }
 
         private static List<Shoes> _instances = new List<Shoes>();
 
@@ -37,13 +46,8 @@ namespace Shoes_Eshop_Project.Entities
             }
         }
 
-        public static List<Shoes> GetAll()
-        {
-            return new List<Shoes>(_instances);
-        }
-        public static void ClearAll()
-        {
-            _instances.Clear();
-        }
+        public static List<Shoes> GetAll() => new List<Shoes>(_instances);
+
+        public static void ClearAll() => _instances.Clear();
     }
 }

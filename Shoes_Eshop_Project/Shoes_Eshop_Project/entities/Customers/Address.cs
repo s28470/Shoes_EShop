@@ -50,7 +50,12 @@ namespace Shoes_Eshop_Project.entities
         public string? ApartmentNumber
         {
             get => _apartmentNumber;
-            set => _apartmentNumber = value;
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                    throw new ArgumentException();
+                _apartmentNumber = value;
+            }
         }
 
         public string PostalCode

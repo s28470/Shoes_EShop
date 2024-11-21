@@ -25,27 +25,21 @@ namespace Shoes_Eshop_Project.Tests
         [Test]
         public void Constructor_ValidParameters_ShouldCreateCompanyCustomer()
         {
-            var customer = new CompanyCustomer("IT Services", "www.example.com");
+            var customer = new CompanyCustomer("IT Services");
             Assert.AreEqual("IT Services", customer.Occupation);
-            Assert.AreEqual("www.example.com", customer.WebSite);
         }
 
         [Test]
         public void Constructor_EmptyOccupation_ShouldThrowArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => new CompanyCustomer("", "www.example.com"));
+            Assert.Throws<ArgumentException>(() => new CompanyCustomer(""));
         }
 
-        [Test]
-        public void Constructor_EmptyWebsite_ShouldThrowArgumentException()
-        {
-            Assert.Throws<ArgumentException>(() => new CompanyCustomer("IT Services", ""));
-        }
-
+        
         [Test]
         public void Save_CustomersSavedToFile_FileShouldExist()
         {
-            var customer = new CompanyCustomer("IT Services", "www.example.com");
+            var customer = new CompanyCustomer("IT Services");
             CompanyCustomer.Save(_filePath);
             Assert.IsTrue(File.Exists(_filePath));
         }
@@ -59,8 +53,8 @@ namespace Shoes_Eshop_Project.Tests
         [Test]
         public void Load_ValidFile_ShouldLoadCustomers()
         {
-            var customer1 = new CompanyCustomer("IT Services", "www.example.com");
-            var customer2 = new CompanyCustomer("Consulting", "www.consulting.com");
+            var customer1 = new CompanyCustomer("IT Services");
+            var customer2 = new CompanyCustomer("Consulting");
             CompanyCustomer.Save(_filePath);
 
             CompanyCustomer.ClearAll();
@@ -75,8 +69,8 @@ namespace Shoes_Eshop_Project.Tests
         [Test]
         public void GetAll_ShouldReturnListOfCustomers()
         {
-            var customer1 = new CompanyCustomer("IT Services", "www.example.com");
-            var customer2 = new CompanyCustomer("Consulting", "www.consulting.com");
+            var customer1 = new CompanyCustomer("IT Services");
+            var customer2 = new CompanyCustomer("Consulting");
             var customers = CompanyCustomer.GetAll();
             Assert.AreEqual(2, customers.Count); 
         }
@@ -84,8 +78,8 @@ namespace Shoes_Eshop_Project.Tests
         [Test]
         public void ClearAll_ShouldRemoveAllCustomers()
         {
-            var customer1 = new CompanyCustomer("IT Services", "www.example.com");
-            var customer2 = new CompanyCustomer("Consulting", "www.consulting.com");
+            var customer1 = new CompanyCustomer("IT Services");
+            var customer2 = new CompanyCustomer("Consulting");
             CompanyCustomer.ClearAll();
             var customers = CompanyCustomer.GetAll();
             Assert.AreEqual(0, customers.Count);

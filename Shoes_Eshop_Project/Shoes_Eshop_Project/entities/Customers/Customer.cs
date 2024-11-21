@@ -4,6 +4,7 @@ using System.IO;
 using System.Text.Json;
 using System.ComponentModel.DataAnnotations;
 using Shoes_Eshop_Project.entities;
+using Shoes_Eshop_Project.extensions;
 
 namespace Shoes_Eshop_Project.Entities
 {
@@ -39,7 +40,15 @@ namespace Shoes_Eshop_Project.Entities
         public string? Email
         {
             get => _email;
-            set => _email = value;
+            set
+            {
+                if (value.IsNullOrWhiteSpace())
+                {
+                    throw new ArgumentException();
+                }
+
+                _email = value;
+            }
         }
 
         public Address Address

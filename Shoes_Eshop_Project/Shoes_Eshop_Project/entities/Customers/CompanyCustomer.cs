@@ -8,7 +8,7 @@ namespace Shoes_Eshop_Project.Entities
     public class CompanyCustomer
     {
         private string _occupation;
-        private string _website;
+        private List<string> _websites = new List<string>() ;
 
         public string Occupation
         {
@@ -20,24 +20,25 @@ namespace Shoes_Eshop_Project.Entities
                 _occupation = value;
             }
         }
-
-        public string WebSite
+        
+        public List<string> Websites
         {
-            get => _website;
+            get => new List<string>(_websites); 
             set
             {
-                if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Website cannot be null or empty.", nameof(value));
-                _website = value;
+                if (value == null || value.Any(string.IsNullOrWhiteSpace))
+                    throw new ArgumentException();
+                _websites = value;
             }
         }
 
+   
+
         private static List<CompanyCustomer> _instances = new List<CompanyCustomer>();
 
-        public CompanyCustomer(string occupation, string website)
+        public CompanyCustomer(string occupation)
         {
             Occupation = occupation;
-            WebSite = website;
             _instances.Add(this);
         }
 
@@ -46,6 +47,31 @@ namespace Shoes_Eshop_Project.Entities
             var jsonData = JsonSerializer.Serialize(_instances);
             File.WriteAllText(filePath, jsonData);
         }
+        
+        public void AddWebsite(string website)
+        {
+            if (string.IsNullOrWhiteSpace(website))
+                throw new ArgumentException();
+    
+            if (_websites.Contains(website))
+                throw new InvalidOperationException("Website already exists in the list.");
+    
+            _websites.Add(website);
+        }
+        
+        public void RemoveWebsite(string website)
+        {
+            if (string.IsNullOrWhiteSpace(website))
+                throw new ArgumentException();
+
+            if (!_websites.Contains(website))
+                throw new InvalidOperationException();
+    
+            _websites.Remove(website);
+        }
+        
+        
+        
 
         public static void Load(string filePath)
         {

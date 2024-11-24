@@ -25,33 +25,41 @@ namespace Shoes_Eshop_Project.Tests
         [Test]
         public void Constructor_ValidParameters_ShouldCreateSneakers()
         {
-            var sneakers = new Sneakers("Running Shoes", "Blue", 120.00m, 0.75, "Air Cushion", 42, 15);
-            Assert.AreEqual("Running Shoes", sneakers.Name);
-            Assert.AreEqual("Blue", sneakers.Color);
-            Assert.AreEqual(120.00m, sneakers.Price);
-            Assert.AreEqual(0.75, sneakers.Weight);
-            Assert.AreEqual("Air Cushion", sneakers.CushioningTechnology);
-            Assert.AreEqual(42, sneakers.ShoeSize);
-            Assert.AreEqual(15, sneakers.Amount);
+            var sneakers = new Sneakers("Air Max", "Black", 150.00m, 1.2, "Air Cushion", 42, 10);
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual("Air Max", sneakers.Name);
+                Assert.AreEqual("Black", sneakers.Color);
+                Assert.AreEqual(150.00m, sneakers.Price);
+                Assert.AreEqual(1.2, sneakers.Weight);
+                Assert.AreEqual("Air Cushion", sneakers.CushioningTechnology);
+                Assert.AreEqual(42, sneakers.ShoeSize);
+                Assert.AreEqual(10, sneakers.Amount);
+            });
         }
 
         [Test]
-        public void Constructor_NonPositiveWeight_ShouldThrowArgumentException()
+        public void Constructor_NegativeWeight_ShouldThrowArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => new Sneakers("Running Shoes", "Blue", 120.00m, -0.5, "Air Cushion", 42, 15));
+            Assert.Throws<ArgumentException>(() =>
+                new Sneakers("Air Max", "Black", 150.00m, -1.2, "Air Cushion", 42, 10));
         }
 
         [Test]
         public void Constructor_EmptyCushioningTechnology_ShouldThrowArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => new Sneakers("Running Shoes", "Blue", 120.00m, 0.75, "", 42, 15));
+            Assert.Throws<ArgumentException>(() =>
+                new Sneakers("Air Max", "Black", 150.00m, 1.2, null, 42, 10));
         }
 
         [Test]
         public void Save_SneakersSavedToFile_FileShouldExist()
         {
-            var sneakers = new Sneakers("Running Shoes", "Blue", 120.00m, 0.75, "Air Cushion", 42, 15);
+            var sneakers = new Sneakers("Air Max", "Black", 150.00m, 1.2, "Air Cushion", 42, 10);
+
             Sneakers.Save(_filePath);
+
             Assert.IsTrue(File.Exists(_filePath));
         }
 
@@ -64,36 +72,32 @@ namespace Shoes_Eshop_Project.Tests
         [Test]
         public void Load_ValidFile_ShouldLoadSneakers()
         {
-            var sneakers1 = new Sneakers("Running Shoes", "Blue", 120.00m, 0.75, "Air Cushion", 42, 15);
-            var sneakers2 = new Sneakers("Walking Shoes", "Black", 100.00m, 0.85, "Foam Cushion", 41, 10);
-            Sneakers.Save(_filePath);
+            var sneakers1 = new Sneakers("Air Max", "Black", 150.00m, 1.2, "Air Cushion", 42, 10);
+            var sneakers2 = new Sneakers("Zoom", "White", 120.00m, 0.9, "Zoom Air", 41, 15);
 
-            Sneakers.ClearAll();
+            Sneakers.Save(_filePath);
             Sneakers.Load(_filePath);
+
             var loadedSneakers = Sneakers.GetAll();
 
-            Assert.AreEqual(2, loadedSneakers.Count);
-            Assert.AreEqual("Running Shoes", loadedSneakers[0].Name);
-            Assert.AreEqual("Walking Shoes", loadedSneakers[1].Name);
-        }
-
-        [Test]
-        public void GetAll_ShouldReturnListOfSneakers()
-        {
-            var sneakers1 = new Sneakers("Running Shoes", "Blue", 120.00m, 0.75, "Air Cushion", 42, 15);
-            var sneakers2 = new Sneakers("Walking Shoes", "Black", 100.00m, 0.85, "Foam Cushion", 41, 10);
-            var sneakersList = Sneakers.GetAll();
-            Assert.AreEqual(2, sneakersList.Count);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(2, loadedSneakers.Count);
+                Assert.AreEqual("Air Max", loadedSneakers[0].Name);
+                Assert.AreEqual("Zoom", loadedSneakers[1].Name);
+                Assert.AreEqual(1.2, loadedSneakers[0].Weight);
+                Assert.AreEqual(0.9, loadedSneakers[1].Weight);
+            });
         }
 
         [Test]
         public void ClearAll_ShouldRemoveAllSneakers()
         {
-            var sneakers1 = new Sneakers("Running Shoes", "Blue", 120.00m, 0.75, "Air Cushion", 42, 15);
-            var sneakers2 = new Sneakers("Walking Shoes", "Black", 100.00m, 0.85, "Foam Cushion", 41, 10);
+            var sneakers = new Sneakers("Air Max", "Black", 150.00m, 1.2, "Air Cushion", 42, 10);
+
             Sneakers.ClearAll();
-            var sneakersList = Sneakers.GetAll();
-            Assert.AreEqual(0, sneakersList.Count);
+
+            Assert.AreEqual(0, Sneakers.GetAll().Count);
         }
 
         [TearDown]

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Shoes_Eshop_Project.Entities
 {
-    public abstract class Product
+    public class Product
     {
         private string _name;
         private decimal _price;
@@ -49,7 +49,7 @@ namespace Shoes_Eshop_Project.Entities
 
         public int Amount { get; set; }
 
-        protected Product(string name, string color, decimal price)
+        public Product(string name, string color, decimal price)
         {
             Name = name;
             Color = color;

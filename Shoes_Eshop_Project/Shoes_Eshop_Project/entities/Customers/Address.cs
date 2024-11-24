@@ -52,8 +52,8 @@ namespace Shoes_Eshop_Project.entities
             get => _apartmentNumber;
             set
             {
-                if (string.IsNullOrEmpty(value))
-                    throw new ArgumentException();
+                if (!string.IsNullOrEmpty(value) && string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Apartment number cannot be only whitespace.");
                 _apartmentNumber = value;
             }
         }

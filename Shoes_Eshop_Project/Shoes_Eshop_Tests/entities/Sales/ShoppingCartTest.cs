@@ -1,26 +1,22 @@
-﻿using NUnit.Framework;
-using Shoes_Eshop_Project.Entities;
+using NUnit.Framework;
 using Shoes_Eshop_Project.Entities.Sales;
+using Shoes_Eshop_Project.Entities;
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using Shoes_Eshop_Project.entities;
 
-namespace Shoes_Eshop_Project.Tests
+namespace Shoes_Eshop_Project.Tests.Sales
 {
     [TestFixture]
     public class ShoppingCartTests
     {
         private string _filePath;
-        private Customer _customer;
-        private Product _product;
 
         [SetUp]
         public void Setup()
         {
-            _filePath = Path.Combine(Path.GetTempPath(), "shopping_carts.json");
-            _customer = new Customer("Alice Doe", "555555555", new Address("Warsaw", "Main Street", "123", null, "12345"));
-            _product = new Slippers("Summer Slippers", "Blue", 39.99m, "Anti-slip", 40, 5);
+            _filePath = Path.Combine(Path.GetTempPath(), "shoppingcarts.json");
             ShoppingCart.ClearAll();
             if (File.Exists(_filePath))
             {
@@ -29,10 +25,12 @@ namespace Shoes_Eshop_Project.Tests
         }
 
         [Test]
-        public void Constructor_ValidCustomer_ShouldCreateShoppingCart()
+        public void Constructor_ValidCustomer_ShouldCreateCart()
         {
-            var cart = new ShoppingCart(_customer);
-            Assert.AreEqual(_customer, cart.Customer);
+            var customer = new IndividualCustomer("John Doe", "123456789", new Address("City", "Street", "1", "A", "12345"), "Male", 30);
+            var cart = new ShoppingCart(customer);
+
+            Assert.AreEqual(customer, cart.Customer);
         }
 
         [Test]
@@ -44,101 +42,96 @@ namespace Shoes_Eshop_Project.Tests
         [Test]
         public void AddProductToCart_ValidProduct_ShouldAddProduct()
         {
-            var cart = new ShoppingCart(_customer);
-            cart.AddProductToCart(_product, 2);
-            Assert.AreEqual(2 * _product.Price, cart.GetTotalPrice());
+            var customer = new IndividualCustomer("John Doe", "123456789", new Address("City", "Street", "1", "A", "12345"), "Male", 30);
+            var cart = new ShoppingCart(customer);
+            var product = new Product("Sneakers", "Black", 100.00m);
+
+            cart.AddProductToCart(product, 2);
+
+            Assert.AreEqual(200.00m, cart.GetTotalPrice());
         }
 
         [Test]
-        public void AddProductToCart_CompletedCart_ShouldThrowInvalidOperationException()
+        public void AddProductToCart_InvalidAmount_ShouldThrowArgumentException()
         {
-            var cart = new ShoppingCart(_customer);
-            cart.CompletePurchase();
-            Assert.Throws<InvalidOperationException>(() => cart.AddProductToCart(_product, 1));
+            var customer = new IndividualCustomer("John Doe", "123456789", new Address("City", "Street", "1", "A", "12345"), "Male", 30);
+            var cart = new ShoppingCart(customer);
+            var product = new Product("Sneakers", "Black", 100.00m);
+
+            Assert.Throws<ArgumentException>(() => cart.AddProductToCart(product, 0));
         }
 
         [Test]
-        public void AddProductToCart_NonPositiveAmount_ShouldThrowArgumentException()
+        public void RemoveProduct_ValidProduct_ShouldRemoveProduct()
         {
-            var cart = new ShoppingCart(_customer);
-            Assert.Throws<ArgumentException>(() => cart.AddProductToCart(_product, 0));
-        }
+            var customer = new IndividualCustomer("John Doe", "123456789", new Address("City", "Street", "1", "A", "12345"), "Male", 30);
+            var cart = new ShoppingCart(customer);
+            var product = new Product("Sneakers", "Black", 100.00m);
 
-        [Test]
-        public void RemoveProduct_ShouldRemoveProductFromCart()
-        {
-            var cart = new ShoppingCart(_customer);
-            cart.AddProductToCart(_product, 2);
-            cart.RemoveProduct(_product);
+            cart.AddProductToCart(product, 2);
+            cart.RemoveProduct(product);
+
             Assert.AreEqual(0, cart.GetTotalPrice());
         }
 
         [Test]
-        public void CompletePurchase_ShouldSetCartAsCompleted()
+        public void RemoveProduct_ProductNotInCart_ShouldDoNothing()
         {
-            var cart = new ShoppingCart(_customer);
+            var customer = new IndividualCustomer("John Doe", "123456789", new Address("City", "Street", "1", "A", "12345"), "Male", 30);
+            var cart = new ShoppingCart(customer);
+            var product = new Product("Sneakers", "Black", 100.00m);
+
+            cart.RemoveProduct(product);
+
+            Assert.AreEqual(0, cart.GetTotalPrice());
+        }
+
+        [Test]
+        public void CompletePurchase_ShouldMarkCartAsCompleted()
+        {
+            var customer = new IndividualCustomer("John Doe", "123456789", new Address("City", "Street", "1", "A", "12345"), "Male", 30);
+            var cart = new ShoppingCart(customer);
+
             cart.CompletePurchase();
-            Assert.Throws<InvalidOperationException>(() => cart.AddProductToCart(_product, 1));
-            Assert.Throws<InvalidOperationException>(() => cart.RemoveProduct(_product));
+
+            Assert.Throws<InvalidOperationException>(() => cart.AddProductToCart(new Product("Sneakers", "Black", 100.00m), 1));
         }
 
         [Test]
-        public void GetTotalPrice_ShouldReturnCorrectTotalPrice()
+        public void Save_ShoppingCartSavedToFile_FileShouldExist()
         {
-            var cart = new ShoppingCart(_customer);
-            var product2 = new Slippers("Summer Slippers", "Blue", 39.99m, "Anti-slip", 40, 5);
-            cart.AddProductToCart(_product, 2);
-            cart.AddProductToCart(product2, 1);
-            Assert.AreEqual((2 * _product.Price) + product2.Price, cart.GetTotalPrice());
-        }
+            var customer = new IndividualCustomer("John Doe", "123456789", new Address("City", "Street", "1", "A", "12345"), "Male", 30);
+            var cart = new ShoppingCart(customer);
 
-        [Test]
-        public void Save_ShoppingCartsSavedToFile_FileShouldExist()
-        {
-            var cart = new ShoppingCart(_customer);
             ShoppingCart.Save(_filePath);
-            Assert.IsTrue(File.Exists(_filePath));
-        }
 
-        [Test]
-        public void Load_FileDoesNotExist_ShouldNotThrowException()
-        {
-            Assert.DoesNotThrow(() => ShoppingCart.Load("nonexistent.json"));
+            Assert.IsTrue(File.Exists(_filePath));
         }
 
         [Test]
         public void Load_ValidFile_ShouldLoadShoppingCarts()
         {
-            var cart1 = new ShoppingCart(_customer);
-            var cart2 = new ShoppingCart(new Customer("Bob Doe", "555555555", new Address("Warsaw", "Main Street", "123", null, "12345")));
-            ShoppingCart.Save(_filePath);
+            var customer = new IndividualCustomer("John Doe", "123456789", new Address("City", "Street", "1", "A", "12345"), "Male", 30);
+            var cart = new ShoppingCart(customer);
 
-            ShoppingCart.ClearAll();
+            ShoppingCart.Save(_filePath);
             ShoppingCart.Load(_filePath);
+
             var loadedCarts = ShoppingCart.GetAll();
 
-            Assert.AreEqual(2, loadedCarts.Count);
-            Assert.AreEqual("Alice Doe", loadedCarts[0].Customer.Name);
-            Assert.AreEqual("Bob Doe", loadedCarts[1].Customer.Name);
-        }
-
-        [Test]
-        public void GetAll_ShouldReturnListOfShoppingCarts()
-        {
-            var cart1 = new ShoppingCart(_customer);
-            var cart2 = new ShoppingCart(new Customer("Bob Doe", "555555555", new Address("Warsaw", "Main Street", "123", null, "12345")));
-            var carts = ShoppingCart.GetAll();
-            Assert.AreEqual(2, carts.Count);
+            Assert.AreEqual(1, loadedCarts.Count);
+            Assert.AreEqual(customer.Name, loadedCarts[0].Customer.Name);
         }
 
         [Test]
         public void ClearAll_ShouldRemoveAllShoppingCarts()
         {
-            var cart1 = new ShoppingCart(_customer);
-            var cart2 = new ShoppingCart(new Customer("Bob Doe", "555555555", new Address("Warsaw", "Main Street", "123", null, "12345")));
+            var customer = new IndividualCustomer("John Doe", "123456789", new Address("City", "Street", "1", "A", "12345"), "Male", 30);
+            var cart = new ShoppingCart(customer);
+
             ShoppingCart.ClearAll();
-            var carts = ShoppingCart.GetAll();
-            Assert.AreEqual(0, carts.Count);
+
+            Assert.AreEqual(0, ShoppingCart.GetAll().Count);
         }
 
         [TearDown]

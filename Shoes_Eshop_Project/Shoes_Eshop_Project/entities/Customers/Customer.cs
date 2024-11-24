@@ -42,11 +42,10 @@ namespace Shoes_Eshop_Project.Entities
             get => _email;
             set
             {
-                if (value.IsNullOrWhiteSpace())
+                if (value != null && string.IsNullOrWhiteSpace(value))
                 {
-                    throw new ArgumentException();
+                    throw new ArgumentException("Email cannot be empty or whitespace.");
                 }
-
                 _email = value;
             }
         }

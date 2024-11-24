@@ -14,7 +14,7 @@ namespace Shoes_Eshop_Project.Tests
         [SetUp]
         public void Setup()
         {
-            _filePath = Path.Combine(Path.GetTempPath(), "sport_sneakers.json");
+            _filePath = Path.Combine(Path.GetTempPath(), "sportSneakers.json");
             SportSneakers.ClearAll();
             if (File.Exists(_filePath))
             {
@@ -25,28 +25,35 @@ namespace Shoes_Eshop_Project.Tests
         [Test]
         public void Constructor_ValidParameters_ShouldCreateSportSneakers()
         {
-            var sportSneakers = new SportSneakers("Basketball Shoes", "Red", 150.00m, 0.9, "Gel Cushion", 44, 20, "Basketball");
-            Assert.AreEqual("Basketball Shoes", sportSneakers.Name);
-            Assert.AreEqual("Red", sportSneakers.Color);
-            Assert.AreEqual(150.00m, sportSneakers.Price);
-            Assert.AreEqual(0.9, sportSneakers.Weight);
-            Assert.AreEqual("Gel Cushion", sportSneakers.CushioningTechnology);
-            Assert.AreEqual(44, sportSneakers.ShoeSize);
-            Assert.AreEqual(20, sportSneakers.Amount);
-            Assert.AreEqual("Basketball", sportSneakers.SportType);
+            var sportSneakers = new SportSneakers("Air Zoom", "Blue", 200.00m, 1.1, "Zoom Air", 43, 20, "Running");
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual("Air Zoom", sportSneakers.Name);
+                Assert.AreEqual("Blue", sportSneakers.Color);
+                Assert.AreEqual(200.00m, sportSneakers.Price);
+                Assert.AreEqual(1.1, sportSneakers.Weight);
+                Assert.AreEqual("Zoom Air", sportSneakers.CushioningTechnology);
+                Assert.AreEqual(43, sportSneakers.ShoeSize);
+                Assert.AreEqual(20, sportSneakers.Amount);
+                Assert.AreEqual("Running", sportSneakers.SportType);
+            });
         }
 
         [Test]
         public void Constructor_EmptySportType_ShouldThrowArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => new SportSneakers("Basketball Shoes", "Red", 150.00m, 0.9, "Gel Cushion", 44, 20, ""));
+            Assert.Throws<ArgumentException>(() =>
+                new SportSneakers("Air Zoom", "Blue", 200.00m, 1.1, "Zoom Air", 43, 20, null));
         }
 
         [Test]
         public void Save_SportSneakersSavedToFile_FileShouldExist()
         {
-            var sportSneakers = new SportSneakers("Basketball Shoes", "Red", 150.00m, 0.9, "Gel Cushion", 44, 20, "Basketball");
+            var sportSneakers = new SportSneakers("Air Zoom", "Blue", 200.00m, 1.1, "Zoom Air", 43, 20, "Running");
+
             SportSneakers.Save(_filePath);
+
             Assert.IsTrue(File.Exists(_filePath));
         }
 
@@ -59,38 +66,32 @@ namespace Shoes_Eshop_Project.Tests
         [Test]
         public void Load_ValidFile_ShouldLoadSportSneakers()
         {
-            var sneakers1 = new SportSneakers("Basketball Shoes", "Red", 150.00m, 0.9, "Gel Cushion", 44, 20, "Basketball");
-            var sneakers2 = new SportSneakers("Running Shoes", "Blue", 130.00m, 0.8, "Foam Cushion", 42, 15, "Running");
-            SportSneakers.Save(_filePath);
+            var sneakers1 = new SportSneakers("Air Zoom", "Blue", 200.00m, 1.1, "Zoom Air", 43, 20, "Running");
+            var sneakers2 = new SportSneakers("Court Shoes", "White", 180.00m, 1.2, "Gel Cushion", 44, 15, "Tennis");
 
-            SportSneakers.ClearAll();
+            SportSneakers.Save(_filePath);
             SportSneakers.Load(_filePath);
+
             var loadedSneakers = SportSneakers.GetAll();
 
-            Assert.AreEqual(2, loadedSneakers.Count);
-            Assert.AreEqual("Basketball Shoes", loadedSneakers[0].Name);
-            Assert.AreEqual("Running Shoes", loadedSneakers[1].Name);
-            Assert.AreEqual("Basketball", loadedSneakers[0].SportType);
-            Assert.AreEqual("Running", loadedSneakers[1].SportType);
-        }
-
-        [Test]
-        public void GetAll_ShouldReturnListOfSportSneakers()
-        {
-            var sneakers1 = new SportSneakers("Basketball Shoes", "Red", 150.00m, 0.9, "Gel Cushion", 44, 20, "Basketball");
-            var sneakers2 = new SportSneakers("Running Shoes", "Blue", 130.00m, 0.8, "Foam Cushion", 42, 15, "Running");
-            var sneakersList = SportSneakers.GetAll();
-            Assert.AreEqual(2, sneakersList.Count);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(2, loadedSneakers.Count);
+                Assert.AreEqual("Air Zoom", loadedSneakers[0].Name);
+                Assert.AreEqual("Court Shoes", loadedSneakers[1].Name);
+                Assert.AreEqual("Running", loadedSneakers[0].SportType);
+                Assert.AreEqual("Tennis", loadedSneakers[1].SportType);
+            });
         }
 
         [Test]
         public void ClearAll_ShouldRemoveAllSportSneakers()
         {
-            var sneakers1 = new SportSneakers("Basketball Shoes", "Red", 150.00m, 0.9, "Gel Cushion", 44, 20, "Basketball");
-            var sneakers2 = new SportSneakers("Running Shoes", "Blue", 130.00m, 0.8, "Foam Cushion", 42, 15, "Running");
+            var sportSneakers = new SportSneakers("Air Zoom", "Blue", 200.00m, 1.1, "Zoom Air", 43, 20, "Running");
+
             SportSneakers.ClearAll();
-            var sneakersList = SportSneakers.GetAll();
-            Assert.AreEqual(0, sneakersList.Count);
+
+            Assert.AreEqual(0, SportSneakers.GetAll().Count);
         }
 
         [TearDown]

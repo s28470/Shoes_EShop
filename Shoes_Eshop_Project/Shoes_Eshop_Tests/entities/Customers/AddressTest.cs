@@ -25,24 +25,34 @@ namespace Shoes_Eshop_Project.Tests
         [Test]
         public void Constructor_ValidParameters_ShouldCreateAddress()
         {
-            var address = new Address("Warsaw", "Main Street", "123", null, "12345");
-            Assert.AreEqual("Warsaw", address.City);
-            Assert.AreEqual("Main Street", address.Street);
-            Assert.AreEqual("123", address.HouseNumber);
-            Assert.AreEqual(null, address.ApartmentNumber);
-            Assert.AreEqual("12345", address.PostalCode);
+            var address = new Address("Warsaw", "Main Street", "123", "1A", "12345");
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual("Warsaw", address.City);
+                Assert.AreEqual("Main Street", address.Street);
+                Assert.AreEqual("123", address.HouseNumber);
+                Assert.AreEqual("1A", address.ApartmentNumber);
+                Assert.AreEqual("12345", address.PostalCode);
+            });
         }
 
         [Test]
         public void Constructor_InvalidPostalCode_ShouldThrowArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => new Address("Warsaw", "Main Street", "123", null, "1234"));
+            Assert.Throws<ArgumentException>(() => new Address("Warsaw", "Main Street", "123", "1A", "1234"));
         }
 
         [Test]
         public void Constructor_EmptyCity_ShouldThrowArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => new Address("", "Main Street", "123", null, "12345"));
+            Assert.Throws<ArgumentException>(() => new Address("", "Main Street", "123", "1A", "12345"));
+        }
+
+        [Test]
+        public void Constructor_NullApartmentNumber_ShouldAllowNull()
+        {
+            var address = new Address("Warsaw", "Main Street", "123", null, "12345");
+            Assert.AreEqual(null, address.ApartmentNumber);
         }
 
         [Test]
@@ -62,16 +72,19 @@ namespace Shoes_Eshop_Project.Tests
         [Test]
         public void Load_ValidFile_ShouldLoadAddresses()
         {
-            var address1 = new Address("Warsaw", "Main Street", "123", null, "12345");
+            var address1 = new Address("Warsaw", "Main Street", "123", "1A", "12345");
             var address2 = new Address("Krakow", "Another Street", "456", "12", "67890");
             Address.Save(_filePath);
 
             Address.Load(_filePath);
             var loadedAddresses = Address.GetAll();
 
-            Assert.AreEqual(2, loadedAddresses.Count);
-            Assert.AreEqual("Warsaw", loadedAddresses[0].City);
-            Assert.AreEqual("Krakow", loadedAddresses[1].City);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(2, loadedAddresses.Count);
+                Assert.AreEqual("Warsaw", loadedAddresses[0].City);
+                Assert.AreEqual("Krakow", loadedAddresses[1].City);
+            });
         }
 
         [Test]

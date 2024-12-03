@@ -6,10 +6,12 @@ using System.Text.Json;
 namespace Shoes_Eshop_Project.Entities.Sales
 {
     public class Promotion
-    {
+    {   
         private string _description;
         private DateTime _startDate;
         private DateTime _endDate;
+        
+        
 
         public string Description
         {
@@ -50,7 +52,11 @@ namespace Shoes_Eshop_Project.Entities.Sales
             StartDate = startDate;
             EndDate = endDate;
             MainPromotion = mainPromotion;
-            PromotionalProducts = promotionalProducts ?? new List<Product>();
+            PromotionalProducts = promotionalProducts;
+            foreach (var promotionalProduct in promotionalProducts)
+            {
+                promotionalProduct.AddPromotion(this);
+            }
 
             _instances.Add(this);
         }
@@ -74,6 +80,50 @@ namespace Shoes_Eshop_Project.Entities.Sales
                 var jsonData = File.ReadAllText(filePath);
                 _instances = JsonSerializer.Deserialize<List<Promotion>>(jsonData) ?? new List<Promotion>();
             }
+        }
+        
+        public void AddProduct(Product product)
+        {
+            if (product == null)
+            {
+                throw new ArgumentException();
+            }
+
+            if (!PromotionalProducts.Contains(product))
+            {
+                PromotionalProducts.Add(product);
+                product.AddPromotion(this);
+            }
+        }
+
+        public void RemoveProduct(Product product)
+        {
+            if (product == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (PromotionalProducts.Contains(product))
+            {
+                PromotionalProducts.Remove(product);
+                product.RemovePromotion(this);
+            }
+
+            if (PromotionalProducts.Count == 0)
+            {
+                _instances.Remove(this);
+            }
+        }
+
+
+        public bool HasProduct(Product product)
+        {
+            return PromotionalProducts.Contains(product);
+        }
+        
+        public ICollection<Product> GetProducts()
+        {
+            return new List<Product>(PromotionalProducts);
         }
 
         public static List<Promotion> GetAll() => new List<Promotion>(_instances);

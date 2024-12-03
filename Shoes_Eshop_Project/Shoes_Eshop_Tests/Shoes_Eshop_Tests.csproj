@@ -25,8 +25,4 @@
       <ProjectReference Include="..\Shoes_Eshop_Project\Shoes_Eshop_Project.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="entities\" />
-    </ItemGroup>
-
 </Project>

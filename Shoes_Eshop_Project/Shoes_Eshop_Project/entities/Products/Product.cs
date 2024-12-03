@@ -1,5 +1,7 @@
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using Shoes_Eshop_Project.Entities.Sales;
 
 namespace Shoes_Eshop_Project.Entities
 {
@@ -8,6 +10,8 @@ namespace Shoes_Eshop_Project.Entities
         private string _name;
         private decimal _price;
         private string _color;
+
+        private IList<Promotion> _related_promotions = new List<Promotion>();
 
         public string Name
         {
@@ -64,5 +68,52 @@ namespace Shoes_Eshop_Project.Entities
                 throw new InvalidOperationException("Insufficient stock.");
             Amount -= quantitySold;
         }
+
+        public void AddPromotion(Promotion promotion)
+        {
+            if (promotion == null)
+            {
+                throw new ArgumentException();
+            }
+
+            if (!_related_promotions.Contains(promotion))
+            {
+                _related_promotions.Add(promotion);
+                promotion.AddProduct(this);
+            }
+        }
+
+        public void RemovePromotion(Promotion promotion)
+        {
+            if (promotion == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (_related_promotions.Contains(promotion))
+            {
+                _related_promotions.Remove(promotion);
+                promotion.RemoveProduct(this);
+            }
+            
+            
+        }
+
+        public void UpdatePromotion(Promotion oldPromotion, Promotion newPromotion)
+        {
+            oldPromotion.RemoveProduct(this);
+            newPromotion.AddProduct(this);
+        }
+        
+        public IList<Promotion> GetPromotions()
+        {
+            return new Collection<Promotion>(_related_promotions);
+        }
+        
+        public bool HasPromotion(Promotion promotion)
+        {
+            return _related_promotions.Contains(promotion);
+        }
+        
     }
 }

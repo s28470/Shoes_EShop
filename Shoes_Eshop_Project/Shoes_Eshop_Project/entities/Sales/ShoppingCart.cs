@@ -14,6 +14,7 @@ namespace Shoes_Eshop_Project.Entities.Sales
         private decimal _totalPrice;
         
         public Customer Customer { get; private set; }
+        
         private static List<ShoppingCart> _instances = new List<ShoppingCart>();
 
         public ShoppingCart(Customer customer)
@@ -39,6 +40,8 @@ namespace Shoes_Eshop_Project.Entities.Sales
 
             if (!_products.TryAdd(product, amount))
                 _products[product] += amount;
+            
+            product.AddCart(this);
         }
 
         public void RemoveProduct(Product product)
@@ -47,6 +50,7 @@ namespace Shoes_Eshop_Project.Entities.Sales
                 throw new InvalidOperationException("Cannot modify a completed cart.");
             
             _products.Remove(product);
+            product.RemoveCart(this);
         }
 
         public void CompletePurchase()

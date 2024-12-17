@@ -4,6 +4,7 @@ using System.IO;
 using System.Text.Json;
 using System.ComponentModel.DataAnnotations;
 using Shoes_Eshop_Project.entities;
+using Shoes_Eshop_Project.Entities.Sales;
 using Shoes_Eshop_Project.extensions;
 
 namespace Shoes_Eshop_Project.Entities
@@ -14,6 +15,8 @@ namespace Shoes_Eshop_Project.Entities
         private string _contactNumber;
         private string? _email;
         private Address _address;
+
+        private IList<ShoppingCart> _relatedShoppingCarts = new List<ShoppingCart>();
 
         public string Name
         {
@@ -98,6 +101,21 @@ namespace Shoes_Eshop_Project.Entities
             Email = email;
             CustomerStatus = CustomerStatus.Default;
             _instances.Add(this);
+        }
+
+        public void AddCart()
+        {
+            
+        }
+
+        public void RemoveCart()
+        {
+            
+        }
+
+        public void GetRelatedCarts()
+        {
+            
         }
 
         public static void Save(string filePath)

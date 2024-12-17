@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Shoes_Eshop_Project.Entities;
 
 namespace Shoes_Eshop_Project.entities
 {
@@ -13,6 +14,8 @@ namespace Shoes_Eshop_Project.entities
         private string _houseNumber;
         private string? _apartmentNumber;
         private string _postalCode;
+
+        private readonly List<Customer> _customersWithAddress = new List<Customer>();
 
         public string City
         {
@@ -80,6 +83,33 @@ namespace Shoes_Eshop_Project.entities
             PostalCode = postalCode;
 
             _addresses.Add(this);
+        }
+
+        public void AddCustomer(Customer customer)
+        {
+            if (customer is null)
+            {
+                throw new ArgumentException();
+            }
+
+            if (!_customersWithAddress.Contains(customer))
+            {
+                _customersWithAddress.Add(customer);
+                
+            }
+        }
+
+        public void RemoveCustomer(Customer customer)
+        {
+            if (_customersWithAddress.Contains(customer))
+            {
+                _customersWithAddress.Remove(customer);
+            }
+        }
+
+        public List<Customer> GetCustomersWithAddress()
+        {
+            return new List<Customer>(_customersWithAddress);
         }
 
         private static bool ValidatePostalCode(string postalCode)

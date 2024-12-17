@@ -108,11 +108,7 @@ namespace Shoes_Eshop_Project.Entities.Sales
                 PromotionalProducts.Remove(product);
                 product.RemovePromotion(this);
             }
-
-            if (PromotionalProducts.Count == 0)
-            {
-                _instances.Remove(this);
-            }
+            
         }
 
 

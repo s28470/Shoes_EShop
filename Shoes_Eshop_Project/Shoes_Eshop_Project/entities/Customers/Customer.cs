@@ -57,7 +57,19 @@ namespace Shoes_Eshop_Project.Entities
             {
                 if (value == null)
                     throw new ArgumentNullException(nameof(value), "Address cannot be null.");
-                _address = value;
+
+                if (_address is null)
+                {
+                    _address = value;
+                    _address.AddCustomer(this);
+                }
+                else
+                {
+                    _address.RemoveCustomer(this);
+                    _address = value;
+                    _address.AddCustomer(this);
+                }
+                
             }
         }
 

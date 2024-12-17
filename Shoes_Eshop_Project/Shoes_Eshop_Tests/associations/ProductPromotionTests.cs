@@ -102,15 +102,7 @@ public class PromotionProductAssociationTests
         Assert.IsFalse(_promotion.HasProduct(_product));
         Assert.IsFalse(_product.HasPromotion(_promotion));
     }
-
-    [Test]
-    public void PromotionAutoRemoveWhenNoProductsLeft_ShouldRemovePromotion()
-    {
-        _promotion.RemoveProduct(_product);
-
-        Assert.IsFalse(Promotion.GetAll().Contains(_promotion));
-    }
-
+    
     [Test]
     public void HasProductInPromotion_ShouldReturnTrueIfProductExists()
     {

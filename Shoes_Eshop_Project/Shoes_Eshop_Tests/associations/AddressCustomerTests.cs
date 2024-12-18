@@ -1,69 +1,147 @@
 using NUnit.Framework;
-using Shoes_Eshop_Project.entities;
 using Shoes_Eshop_Project.Entities;
-using System;
+using Shoes_Eshop_Project.entities;
 
 namespace Shoes_Eshop_Project.Tests
 {
     [TestFixture]
-    public class AddressCustomerTests
+    public class CustomerAddressTests
     {
-        private Address _address1;
-        private Address _address2;
-        private Customer _customer1;
-        private Customer _customer2;
-
         [SetUp]
-        public void Setup()
+        public void SetUp()
         {
             Address.ClearAll();
             Customer.ClearAll();
-
-            _address1 = new Address("City1", "Street1", "12A", "34", "12345");
-            _address2 = new Address("City2", "Street2", "15B", null, "54321");
-
-            _customer1 = new Customer("John Doe", "1234567890", _address1, "john@example.com");
-            _customer2 = new Customer("Jane Doe", "0987654321", _address1);
         }
 
         [Test]
-        public void Test_CreationOfReferences_CheckReverseConnection()
+        public void RemoveAddress_RemovesAssociationFromCustomerAndAddress()
         {
-            Assert.Contains(_customer1, _address1.GetCustomersWithAddress());
-            Assert.Contains(_customer2, _address1.GetCustomersWithAddress());
-            Assert.AreEqual(_address1, _customer1.Address);
+            
+            var address = new Address("City", "Street", "123", null, "12345");
+            var customer = new Customer("John Doe", "1234567890", address);
+
+            
+            customer.RemoveAddress();
+
+            
+            Assert.IsNull(customer.Address);
+            Assert.IsFalse(address.HasCustomer());
         }
 
         [Test]
-        public void Test_ModificationOfReferences_CheckReverseConnection()
+        public void RemoveCustomer_RemovesAssociationFromAddressAndCustomer()
         {
-            // Change Customer1's address
-            _customer1.Address = _address2;
+           
+            var address = new Address("City", "Street", "123", null, "12345");
+            var customer = new Customer("John Doe", "1234567890", address);
 
-            Assert.Contains(_customer1, _address2.GetCustomersWithAddress());
-            Assert.IsFalse(_address1.GetCustomersWithAddress().Contains(_customer1));
-            Assert.AreEqual(_address2, _customer1.Address);
+           
+            address.RemoveCustomer();
+
+         
+            Assert.IsNull(customer.Address);
+            Assert.IsFalse(address.HasCustomer());
         }
 
         [Test]
-        public void Test_DeletionOfReferences_CheckReverseConnection()
+        public void Address_CanBeReassignedAfterRemovingCustomer()
         {
-            _address1.RemoveCustomer(_customer2);
+         
+            var address1 = new Address("City1", "Street1", "123", null, "12345");
+            var address2 = new Address("City2", "Street2", "456", null, "67890");
+            var customer = new Customer("John Doe", "1234567890", address1);
 
-            Assert.IsFalse(_address1.GetCustomersWithAddress().Contains(_customer2));
-            Assert.DoesNotThrow(() => _customer2.Address = _address2);
+         
+            address1.RemoveCustomer();
+            customer.Address = address2;
+
+         
+            Assert.AreEqual(address2, customer.Address);
+            Assert.IsFalse(address1.HasCustomer());
+            Assert.IsTrue(address2.HasCustomer());
         }
-        
 
         [Test]
-        public void Test_Exceptions_Validation()
+        public void Customer_CanBeReassignedToNewAddress()
         {
-            Assert.Throws<ArgumentException>(() => new Address("", "Street", "10", null, "12345"));
-            Assert.Throws<ArgumentException>(() => new Address("City", "", "10", null, "12345"));
-            Assert.Throws<ArgumentException>(() => new Address("City", "Street", "", null, "12345"));
-            Assert.Throws<ArgumentException>(() => new Address("City", "Street", "10", null, "InvalidPostal"));
-            Assert.Throws<ArgumentException>(() => new Customer("", "123456", _address1));
-            Assert.Throws<ArgumentNullException>(() => new Customer("John", "123456", null));
+          
+            var address1 = new Address("City1", "Street1", "123", null, "12345");
+            var address2 = new Address("City2", "Street2", "456", null, "67890");
+            var customer = new Customer("John Doe", "1234567890", address1);
+
+          
+            customer.RemoveAddress();
+            customer.Address = address2;
+
+          
+            Assert.AreEqual(address2, customer.Address);
+            Assert.IsFalse(address1.HasCustomer());
+            Assert.IsTrue(address2.HasCustomer());
+        }
+
+        [Test]
+        public void RemovingAddressDoesNotAffectOtherCustomers()
+        {
+          
+            var address1 = new Address("City1", "Street1", "123", null, "12345");
+            var address2 = new Address("City2", "Street2", "456", null, "67890");
+            var customer1 = new Customer("John Doe", "1234567890", address1);
+            var customer2 = new Customer("Jane Doe", "0987654321", address2);
+
+          
+            customer1.RemoveAddress();
+
+          
+            Assert.IsNull(customer1.Address);
+            Assert.IsTrue(address2.HasCustomer());
+            Assert.AreEqual(customer2, address2.GetCustomer());
+        }
+
+        [Test]
+        public void RemovingCustomerDoesNotAffectOtherAddresses()
+        {
+          
+            var address1 = new Address("City1", "Street1", "123", null, "12345");
+            var address2 = new Address("City2", "Street2", "456", null, "67890");
+            var customer1 = new Customer("John Doe", "1234567890", address1);
+            var customer2 = new Customer("Jane Doe", "0987654321", address2);
+
+          
+            address1.RemoveCustomer();
+
+          
+            Assert.IsNull(customer1.Address);
+            Assert.AreEqual(customer2, address2.GetCustomer());
+            Assert.IsTrue(address2.HasCustomer());
+        }
+
+        [Test]
+        public void RemoveAddress_WhenNoAddressSet_DoesNothing()
+        {
+          
+            var address = new Address("City", "Street", "123", null, "12345");
+            var customer = new Customer("John Doe", "1234567890", address);
+
+          
+            customer.RemoveAddress(); 
+            customer.RemoveAddress(); 
+
+          
+            Assert.IsNull(customer.Address); 
+        }
+
+        [Test]
+        public void RemoveCustomer_WhenNoCustomerSet_DoesNothing()
+        {
+          
+            var address = new Address("City", "Street", "123", null, "12345");
+
+          
+            address.RemoveCustomer();
+
+            
+            Assert.IsFalse(address.HasCustomer());
         }
     }
 }

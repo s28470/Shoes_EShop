@@ -15,7 +15,6 @@ namespace Shoes_Eshop_Project.Entities
         private string _contactNumber;
         private string? _email;
         private Address _address;
-
         private IList<ShoppingCart> _relatedShoppingCarts = new List<ShoppingCart>();
 
         public string Name
@@ -61,18 +60,18 @@ namespace Shoes_Eshop_Project.Entities
                 if (value == null)
                     throw new ArgumentNullException(nameof(value), "Address cannot be null.");
 
-                if (_address is null)
+                if (value.HasCustomer())
                 {
-                    _address = value;
-                    _address.AddCustomer(this);
+                    throw new ArgumentException("The address is already associated with another customer.");
                 }
-                else
+
+                if (_address != null)
                 {
-                    _address.RemoveCustomer(this);
-                    _address = value;
-                    _address.AddCustomer(this);
+                    Address.Remove(_address); 
                 }
-                
+
+                _address = value; 
+                _address.AddCustomer(this); 
             }
         }
 
@@ -102,21 +101,7 @@ namespace Shoes_Eshop_Project.Entities
             CustomerStatus = CustomerStatus.Default;
             _instances.Add(this);
         }
-
-        public void AddCart()
-        {
-            
-        }
-
-        public void RemoveCart()
-        {
-            
-        }
-
-        public void GetRelatedCarts()
-        {
-            
-        }
+        
 
         public static void Save(string filePath)
         {
@@ -140,6 +125,16 @@ namespace Shoes_Eshop_Project.Entities
             if (TotalPurchases >= _totalPurchasesToBecomeVip)
             {
                 CustomerStatus = CustomerStatus.VIP;
+            }
+        }
+        
+        public void RemoveAddress()
+        {
+            if (_address != null)
+            {
+                var tempAddress = _address; 
+                _address = null; 
+                tempAddress.RemoveCustomer(); 
             }
         }
 

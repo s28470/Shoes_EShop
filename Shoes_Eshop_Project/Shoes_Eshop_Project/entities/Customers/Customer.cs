@@ -143,6 +143,15 @@ namespace Shoes_Eshop_Project.Entities
             return CustomerStatus == CustomerStatus.VIP ? totalPrice * (1 - _vipDiscount) : totalPrice;
         }
 
+        public static void Remove(Customer customer)
+        {
+            if (_instances.Contains(customer))
+            {
+                _instances.Remove(customer);
+                Address.Remove(customer._address);
+            }
+        }
+
         public static void ClearAll() => _instances.Clear();
     }
 }

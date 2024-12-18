@@ -143,5 +143,16 @@ namespace Shoes_Eshop_Project.Tests
             
             Assert.IsFalse(address.HasCustomer());
         }
+        
+        [Test]
+        public void Remove_RemovesAddressFromInstancesWhenCustomerIsDeleted()
+        {
+            var address = new Address("City", "Street", "123", "1A", "12345");
+            var customer = new Customer("John Doe", "1234567890", address);
+
+            Customer.Remove(customer);
+
+            Assert.IsFalse(Address.GetAll().Contains(address), "Address was not removed from instances when customer was deleted.");
+        }
     }
 }

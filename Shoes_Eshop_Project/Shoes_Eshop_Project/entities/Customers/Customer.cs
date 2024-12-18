@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.ComponentModel.DataAnnotations;
 using Shoes_Eshop_Project.entities;
+using Shoes_Eshop_Project.Entities.Sales;
 using Shoes_Eshop_Project.extensions;
 
 namespace Shoes_Eshop_Project.Entities
@@ -14,6 +16,7 @@ namespace Shoes_Eshop_Project.Entities
         private string _contactNumber;
         private string? _email;
         private Address _address;
+        private List<ShoppingCart> _relatedShoppingCarts = new List<ShoppingCart>();
 
         public string Name
         {
@@ -57,7 +60,43 @@ namespace Shoes_Eshop_Project.Entities
             {
                 if (value == null)
                     throw new ArgumentNullException(nameof(value), "Address cannot be null.");
+
+                if (value.HasCustomer())
+                    throw new ArgumentException("The address is already associated with another customer.");
+
+                if (_address != null)
+                    Address.Remove(_address);
+
                 _address = value;
+                _address.AddCustomer(this);
+            }
+        }
+
+        public List<ShoppingCart> GetShoppingCarts()
+        {
+            return new List<ShoppingCart>(_relatedShoppingCarts);
+        }
+
+        public IReadOnlyList<ShoppingCart> ShoppingCarts => _relatedShoppingCarts.AsReadOnly();
+
+        public void AddShoppingCart(ShoppingCart cart)
+        {
+            if (cart == null)
+                throw new ArgumentNullException(nameof(cart), "Cart cannot be null.");
+
+            if (cart.Customer != this)
+                throw new InvalidOperationException("This cart belongs to a different customer.");
+
+            if (!_relatedShoppingCarts.Contains(cart))
+                _relatedShoppingCarts.Add(cart);
+        }
+
+        public void RemoveShoppingCart(ShoppingCart cart)
+        {
+            if (_relatedShoppingCarts.Contains(cart))
+            {
+                _relatedShoppingCarts.Remove(cart);
+                cart.UnsetCustomer();
             }
         }
 
@@ -113,9 +152,32 @@ namespace Shoes_Eshop_Project.Entities
             }
         }
 
+        public void RemoveAddress()
+        {
+            if (_address != null)
+            {
+                var tempAddress = _address;
+                _address = null;
+                tempAddress.RemoveCustomer();
+            }
+        }
+
         public double ApplyDiscountForVip(double totalPrice)
         {
             return CustomerStatus == CustomerStatus.VIP ? totalPrice * (1 - _vipDiscount) : totalPrice;
+        }
+
+        public static void Remove(Customer customer)
+        {
+            if (_instances.Contains(customer))
+            {
+                _instances.Remove(customer);
+                foreach (var relatedShoppingCart in customer._relatedShoppingCarts)
+                {
+                    ShoppingCart.Remove(relatedShoppingCart);
+                }
+                Address.Remove(customer._address);
+            }
         }
 
         public static void ClearAll() => _instances.Clear();

@@ -12,8 +12,26 @@ namespace Shoes_Eshop_Project.Entities.Sales
         private Dictionary<Product, int> _products;
         private bool _isCompleted;
         private decimal _totalPrice;
-        
-        public Customer Customer { get; private set; }
+
+        private Customer _customer;
+
+        public Customer Customer
+        {
+            get => _customer;
+            private set
+            {
+                if (value == null)
+                    throw new ArgumentNullException(nameof(value), "Customer cannot be null.");
+
+                if (_customer != null && _customer != value)
+                    _customer.RemoveShoppingCart(this);
+
+                _customer = value;
+                if (!_customer.ShoppingCarts.Contains(this))
+                    _customer.AddShoppingCart(this);
+            }
+        }
+
         private static List<ShoppingCart> _instances = new List<ShoppingCart>();
 
         public ShoppingCart(Customer customer)
@@ -28,25 +46,38 @@ namespace Shoes_Eshop_Project.Entities.Sales
             _totalPrice = _products.Sum(item => item.Key.Price * item.Value);
             return _totalPrice;
         }
-        
+
         public void AddProductToCart(Product product, int amount)
         {
             if (_isCompleted)
                 throw new InvalidOperationException("Cannot modify a completed cart.");
-            
+
             if (amount <= 0)
                 throw new ArgumentException("Amount must be positive.", nameof(amount));
 
             if (!_products.TryAdd(product, amount))
                 _products[product] += amount;
+
+            product.AddCart(this);
         }
 
         public void RemoveProduct(Product product)
         {
             if (_isCompleted)
                 throw new InvalidOperationException("Cannot modify a completed cart.");
-            
+
             _products.Remove(product);
+            product.RemoveCart(this);
+        }
+
+        public void UnsetCustomer()
+        {
+            if (_customer != null)
+            {
+                var tempCustomer = _customer;
+                _customer = null;
+                tempCustomer.RemoveShoppingCart(this);
+            }
         }
 
         public void CompletePurchase()
@@ -75,5 +106,14 @@ namespace Shoes_Eshop_Project.Entities.Sales
         public static List<ShoppingCart> GetAll() => new List<ShoppingCart>(_instances);
 
         public static void ClearAll() => _instances.Clear();
+
+        public static void Remove(ShoppingCart relatedShoppingCart)
+        {
+            if (_instances.Contains(relatedShoppingCart))
+            {
+                _instances.Remove(relatedShoppingCart);
+            }
+        }
+        
     }
 }

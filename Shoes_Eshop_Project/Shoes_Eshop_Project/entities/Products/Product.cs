@@ -13,6 +13,8 @@ namespace Shoes_Eshop_Project.Entities
 
         private IList<Promotion> _related_promotions = new List<Promotion>();
 
+        private IList<ShoppingCart> _shoppingCartsWithThisProduct = new List<ShoppingCart>();
+
         public string Name
         {
             get => _name;
@@ -113,6 +115,27 @@ namespace Shoes_Eshop_Project.Entities
         public bool HasPromotion(Promotion promotion)
         {
             return _related_promotions.Contains(promotion);
+        }
+
+        public void AddCart(ShoppingCart cart)
+        {
+            if (!_shoppingCartsWithThisProduct.Contains(cart))
+            {
+                _shoppingCartsWithThisProduct.Add(cart);
+            }
+        }
+
+        public void RemoveCart(ShoppingCart cart)
+        {
+            if (_shoppingCartsWithThisProduct.Contains(cart))
+            {
+                _shoppingCartsWithThisProduct.Remove(cart);
+            }
+        } 
+        
+        public List<ShoppingCart> GetShoppingCartsWithThisProduct()
+        {
+            return new List<ShoppingCart>(_shoppingCartsWithThisProduct);
         }
         
     }

@@ -17,7 +17,7 @@ namespace Shoes_Eshop_Project.Entities
         private string? _email;
         private Address _address;
         private List<ShoppingCart> _relatedShoppingCarts = new List<ShoppingCart>();
-
+        
         public string Name
         {
             get => _name;
@@ -39,6 +39,8 @@ namespace Shoes_Eshop_Project.Entities
                 _contactNumber = value;
             }
         }
+        
+        public DateTime? PremiumExpiresAt { get; set; }
 
         public string? Email
         {
@@ -124,7 +126,19 @@ namespace Shoes_Eshop_Project.Entities
             Address = address;
             Email = email;
             CustomerStatus = CustomerStatus.Default;
+            TotalPurchases = 0;
             _instances.Add(this);
+        }
+
+
+        public Customer(string name, string contactNumber, Address address,string? email, DateTime premiumExpiresAt)
+        {
+            _name = name;
+            _contactNumber = contactNumber;
+            _email = email;
+            _address = address;
+            PremiumExpiresAt = premiumExpiresAt;
+            CustomerStatus = CustomerStatus.VIP;
         }
 
         public static void Save(string filePath)
@@ -149,6 +163,26 @@ namespace Shoes_Eshop_Project.Entities
             if (TotalPurchases >= _totalPurchasesToBecomeVip)
             {
                 CustomerStatus = CustomerStatus.VIP;
+            }
+        }
+
+        private void Promote()
+        {
+            if (CustomerStatus == CustomerStatus.Default && TotalPurchases >= _totalPurchasesToBecomeVip)
+            {
+                CustomerStatus = CustomerStatus.VIP; 
+                PremiumExpiresAt = DateTime.Now.AddMonths(1);
+                TotalPurchases = 0;
+            }
+        }
+
+
+        private void Demote()
+        {
+            if (CustomerStatus == CustomerStatus.VIP && DateTime.Now >= PremiumExpiresAt)
+            {
+                CustomerStatus = CustomerStatus.Default;
+                PremiumExpiresAt = null;
             }
         }
 
